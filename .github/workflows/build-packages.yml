@@ -58,13 +58,13 @@ jobs:
       - name: Build executable (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
-          pyinstaller --name wifiqr --onefile --windowed -m wifiqr.app \
+          pyinstaller --name wifiqr --onefile --windowed src/wifiqr/app.py \
             --add-data "src/wifiqr/resources${PYI_DATA_SEP}wifiqr/resources"
 
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
         run: |
-          pyinstaller --name wifiqr --onefile --windowed -m wifiqr.app \
+          pyinstaller --name wifiqr --onefile --windowed src/wifiqr/app.py \
             --add-data "src/wifiqr/resources${PYI_DATA_SEP}wifiqr/resources"
 
       - name: Build .deb package
