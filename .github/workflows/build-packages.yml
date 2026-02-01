@@ -82,6 +82,7 @@ jobs:
 
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
+        shell: bash
         run: |
           pyinstaller --name wifiqr --onefile --windowed src/wifiqr/app.py \
             --add-data "src/wifiqr/resources${PYI_DATA_SEP}wifiqr/resources"
