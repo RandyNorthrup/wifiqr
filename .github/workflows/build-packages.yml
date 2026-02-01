@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
+        os: [ubuntu-latest, windows-latest, macos-15-intel]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -19,6 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
+        id: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -49,7 +50,16 @@ jobs:
           echo "C:\\tools\\msys64\\mingw64\\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh
 
-      - name: Install dependencies
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          "${{ steps.setup-python.outputs.python-path }}" -m pip install --upgrade pip
+          "${{ steps.setup-python.outputs.python-path }}" -m pip install -e .
+          "${{ steps.setup-python.outputs.python-path }}" -m pip install pyinstaller
+        shell: pwsh
+
+      - name: Install dependencies (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .
