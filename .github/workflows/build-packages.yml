@@ -38,7 +38,7 @@ jobs:
       - name: Install system dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          choco install -y cairo
+          choco install -y cairo || echo "Cairo package not available via Chocolatey; continuing without system Cairo."
 
       - name: Install dependencies
         run: |
