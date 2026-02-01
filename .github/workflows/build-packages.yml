@@ -53,9 +53,9 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          "${{ steps.setup-python.outputs.python-path }}" -m pip install --upgrade pip
-          "${{ steps.setup-python.outputs.python-path }}" -m pip install -e .
-          "${{ steps.setup-python.outputs.python-path }}" -m pip install pyinstaller
+          & "${{ steps.setup-python.outputs.python-path }}" -m pip install --upgrade pip
+          & "${{ steps.setup-python.outputs.python-path }}" -m pip install -e .
+          & "${{ steps.setup-python.outputs.python-path }}" -m pip install pyinstaller
         shell: pwsh
 
       - name: Install dependencies (Linux/macOS)
