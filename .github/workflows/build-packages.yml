@@ -1,0 +1,95 @@
+name: Build packages
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2 libpango-1.0-0 libgdk-pixbuf2.0-0 libffi-dev
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install cairo pango gdk-pixbuf libffi
+
+      - name: Install system dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install -y cairo
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pyinstaller
+
+      - name: Set PyInstaller data separator
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            echo "PYI_DATA_SEP=;" >> $GITHUB_ENV
+          else
+            echo "PYI_DATA_SEP=:" >> $GITHUB_ENV
+          fi
+
+      - name: Build executable (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          pyinstaller --name wifiqr --onefile --windowed -m wifiqr.app \
+            --add-data "src/wifiqr/resources${PYI_DATA_SEP}wifiqr/resources"
+
+      - name: Build executable (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          pyinstaller --name wifiqr --onefile --windowed -m wifiqr.app \
+            --add-data "src/wifiqr/resources${PYI_DATA_SEP}wifiqr/resources"
+
+      - name: Build .deb package
+        if: runner.os == 'Linux'
+        run: |
+          VERSION=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          PKG_DIR=deb_pkg
+          mkdir -p ${PKG_DIR}/DEBIAN
+          mkdir -p ${PKG_DIR}/usr/local/bin
+          install -m 755 dist/wifiqr ${PKG_DIR}/usr/local/bin/wifiqr
+          cat > ${PKG_DIR}/DEBIAN/control <<EOF
+          Package: wifiqr
+          Version: ${VERSION}
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Randy Northrup
+          Description: WifiQR - cross-platform Wi-Fi QR code generator
+          EOF
+          dpkg-deb --build ${PKG_DIR} dist/wifiqr_${VERSION}_amd64.deb
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wifiqr-${{ runner.os }}
+          path: |
+            dist/wifiqr*
+            dist/*.deb
