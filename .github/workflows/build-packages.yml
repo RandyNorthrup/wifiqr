@@ -127,19 +127,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: wifiqr-*
-          merge-multiple: true
+          path: artifacts
 
       - name: Package macOS app
         run: |
-          if [[ -d "wifiqr-macOS/wifiqr.app" ]]; then
-            zip -r wifiqr-macOS.zip wifiqr-macOS/wifiqr.app
+          if [[ -d "artifacts/wifiqr-macOS/wifiqr.app" ]]; then
+            zip -r wifiqr-macOS.zip artifacts/wifiqr-macOS/wifiqr.app
           fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            wifiqr-Linux/wifiqr
-            wifiqr-Linux/*.deb
-            wifiqr-Windows/wifiqr.exe
+            artifacts/wifiqr-Linux/wifiqr
+            artifacts/wifiqr-Linux/*.deb
+            artifacts/wifiqr-Windows/wifiqr.exe
             wifiqr-macOS.zip
