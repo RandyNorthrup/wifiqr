@@ -2,7 +2,7 @@
 
 WifiQR is a cross-platform desktop app for generating Wi‑Fi QR codes and exporting Wi‑Fi profiles. Built with PySide6, it provides a modern Qt interface for fast, consistent onboarding across Windows, macOS, and mobile devices.
 
-![Build packages](https://github.com/randy/wifiqr/actions/workflows/build-packages.yml/badge.svg)
+![Build packages](https://github.com/RandyNorthrup/wifiqr/actions/workflows/build-packages.yml/badge.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green)
 
