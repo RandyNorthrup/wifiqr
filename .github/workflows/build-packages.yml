@@ -6,6 +6,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -113,3 +116,30 @@ jobs:
           path: |
             dist/wifiqr*
             dist/*.deb
+
+  release:
+    if: github.ref == 'refs/tags/v1.0'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wifiqr-*
+          merge-multiple: true
+
+      - name: Package macOS app
+        run: |
+          if [[ -d "wifiqr-macOS/wifiqr.app" ]]; then
+            zip -r wifiqr-macOS.zip wifiqr-macOS/wifiqr.app
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            wifiqr-Linux/wifiqr
+            wifiqr-Linux/*.deb
+            wifiqr-Windows/wifiqr.exe
+            wifiqr-macOS.zip
