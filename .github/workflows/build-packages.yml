@@ -40,7 +40,7 @@ jobs:
         run: |
           choco install -y msys2
           C:\tools\msys64\usr\bin\pacman.exe -Syu --noconfirm
-          C:\tools\msys64\usr\bin\pacman.exe -S --noconfirm mingw-w64-x86_64-cairo mingw-w64-x86_64-pango mingw-w64-x86_64-gdk-pixbuf
+          C:\tools\msys64\usr\bin\pacman.exe -S --noconfirm mingw-w64-x86_64-cairo mingw-w64-x86_64-pango mingw-w64-x86_64-gdk-pixbuf2
         shell: pwsh
 
       - name: Add MSYS2 to PATH (Windows)
