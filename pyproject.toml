@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wifiqr"
-version = "1.1.1"
+version = "1.1"
 description = "Cross-platform WiFi QR code generator"
 readme = "README.md"
 requires-python = ">=3.10"
