@@ -660,6 +660,9 @@ class MainWindow(QMainWindow):
                 import cairosvg  # type: ignore[import-untyped]
 
                 image_bytes = cairosvg.svg2png(bytestring=image_bytes)
+            if not isinstance(image_bytes, (bytes, bytearray, memoryview)):
+                raise ValueError("Image data is empty or invalid.")
+            image_bytes = bytes(image_bytes)
             with Image.open(io.BytesIO(image_bytes)) as image:
                 image.verify()
             image_base64 = base64.b64encode(image_bytes).decode("utf-8")
